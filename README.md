@@ -26,7 +26,8 @@ python -m pip install -e .
 
 cp data/profile.example.json data/profile.json
 cp data/candidate_facts.example.json data/candidate_facts.json
-# Edit the two local files with truthful personal details.
+cp data/resume_facts.example.json data/resume_facts.json
+# Edit the three local files with truthful personal details.
 
 intern-scout init
 intern-scout list
@@ -92,13 +93,21 @@ This writes four files under the ignored `applications/` directory:
 
 The drafts use facts from the ignored `data/candidate_facts.json`. They never invent metrics and never submit anything.
 
-To approve a viable role, create the packet, and attach an already optimised resume in one step:
+To generate a one-page resume without approving the role yet:
 
 ```bash
-intern-scout approve 3 --resume output/pdf/role-specific-resume.pdf
+intern-scout tailor 3
 ```
 
-The command blocks roles already known to be ineligible, marks the role approved, copies the PDF into the private application workspace, and writes `application.json` for the later browser-filling stage. Approval authorises preparation only: the browser runner must show all extracted fields and stop before the employer's final Submit action.
+The generator ranks only pre-approved factual bullets from the ignored `data/resume_facts.json`, reorders projects and skills against the role description, and refuses to keep a PDF that spills beyond one page.
+
+To approve a viable role, automatically generate the tailored resume, and create the packet in one step:
+
+```bash
+intern-scout approve 3
+```
+
+You can still override the generated file with `--resume path/to/resume.pdf`. The command blocks roles already known to be ineligible, marks the role approved, copies the PDF into the private application workspace, and writes `application.json` for the browser-filling stage. Approval authorises resume generation and form preparation only: the browser runner shows extracted fields and stops before the employer's final Submit action.
 
 ## GitHub Pages
 
@@ -155,4 +164,4 @@ No test dependency installation is required.
 
 ## Current limitation and next milestone
 
-The private approval gate and application manifest are in place. The next milestone is a browser-filling runner that uses the attached role-specific PDF, completes deterministic fields, flags unanswered declarations, and pauses on a final review screen before submission. CAPTCHA, authentication and employer-specific declarations will remain human steps.
+The private approval gate, automatic one-page resume generation and application manifest are in place. The next milestone is a browser-filling runner that uses the attached role-specific PDF, completes deterministic fields, flags unanswered declarations, and pauses on a final review screen before submission. CAPTCHA, authentication and employer-specific declarations will remain human steps.

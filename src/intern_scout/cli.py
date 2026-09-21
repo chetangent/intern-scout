@@ -11,6 +11,7 @@ from .dashboard import serve
 from .db import VALID_STATUSES, initialise, list_jobs, stats, update_status, upsert_job
 from .digest import build_digest, write_digest
 from .extract import collect_all
+from .resume import generate_tailored_resume, load_resume_facts
 from .scoring import score_job
 from .site_export import export_site
 
@@ -22,7 +23,9 @@ DEFAULT_SOURCES = ROOT / "data" / "sources.json"
 DEFAULT_SEEDS = ROOT / "data" / "seed_jobs.json"
 DEFAULT_DIGEST = ROOT / "data" / "digest.md"
 DEFAULT_FACTS = ROOT / "data" / "candidate_facts.json"
+DEFAULT_RESUME_FACTS = ROOT / "data" / "resume_facts.json"
 DEFAULT_APPLICATIONS = ROOT / "applications"
+DEFAULT_RESUMES = ROOT / "output" / "pdf"
 DEFAULT_SITE = ROOT / "site"
 
 
@@ -112,6 +115,8 @@ def cmd_serve(args: argparse.Namespace) -> int:
         profile_path=args.profile,
         facts_path=args.facts,
         applications_path=args.output,
+        resume_facts_path=args.resume_facts,
+        resume_output_path=args.resume_output,
     )
     return 0
 
@@ -143,22 +148,51 @@ def cmd_prepare(args: argparse.Namespace) -> int:
 def cmd_approve(args: argparse.Namespace) -> int:
     initialise(args.db)
     try:
+        resume_path = args.resume
+        if resume_path is None:
+            job = next((item for item in list_jobs(args.db, limit=1000) if item["id"] == args.job_id), None)
+            if job is None:
+                raise ValueError(f"Job {args.job_id} was not found")
+            resume_path = generate_tailored_resume(
+                job,
+                load_profile(args.profile),
+                load_resume_facts(args.resume_facts),
+                args.resume_output,
+            )
         directory = approve_application(
             args.db,
             args.job_id,
             load_profile(args.profile),
             load_facts(args.facts),
             args.output,
-            resume_path=args.resume,
+            resume_path=resume_path,
         )
     except (ValueError, FileNotFoundError) as exc:
         print(str(exc), file=sys.stderr)
         return 1
     print(f"Approved job {args.job_id} and prepared: {directory}")
-    if args.resume is None:
-        print("No tailored PDF attached yet; add one before starting the employer form.")
-    else:
-        print("Tailored resume attached. The application still requires final form review before submission.")
+    print(f"Tailored resume attached: {resume_path}")
+    print("The application still requires final form review before submission.")
+    return 0
+
+
+def cmd_tailor(args: argparse.Namespace) -> int:
+    initialise(args.db)
+    job = next((item for item in list_jobs(args.db, limit=1000) if item["id"] == args.job_id), None)
+    if job is None:
+        print(f"Job {args.job_id} was not found", file=sys.stderr)
+        return 1
+    try:
+        output = generate_tailored_resume(
+            job,
+            load_profile(args.profile),
+            load_resume_facts(args.resume_facts),
+            args.output,
+        )
+    except (ValueError, FileNotFoundError, KeyError) as exc:
+        print(str(exc), file=sys.stderr)
+        return 1
+    print(f"Generated tailored resume: {output}")
     return 0
 
 
@@ -208,6 +242,8 @@ def build_parser() -> argparse.ArgumentParser:
     serve_parser.add_argument("--port", type=int, default=8765)
     serve_parser.add_argument("--facts", type=Path, default=DEFAULT_FACTS)
     serve_parser.add_argument("--output", type=Path, default=DEFAULT_APPLICATIONS)
+    serve_parser.add_argument("--resume-facts", type=Path, default=DEFAULT_RESUME_FACTS)
+    serve_parser.add_argument("--resume-output", type=Path, default=DEFAULT_RESUMES)
     serve_parser.set_defaults(func=cmd_serve)
 
     export_parser = subparsers.add_parser("export-site", help="Export public opportunity data for GitHub Pages")
@@ -231,7 +267,16 @@ def build_parser() -> argparse.ArgumentParser:
     approve_parser.add_argument("--facts", type=Path, default=DEFAULT_FACTS)
     approve_parser.add_argument("--output", type=Path, default=DEFAULT_APPLICATIONS)
     approve_parser.add_argument("--resume", type=Path, help="Optimised resume PDF to attach")
+    approve_parser.add_argument("--resume-facts", type=Path, default=DEFAULT_RESUME_FACTS)
+    approve_parser.add_argument("--resume-output", type=Path, default=DEFAULT_RESUMES)
     approve_parser.set_defaults(func=cmd_approve)
+
+    tailor_parser = subparsers.add_parser("tailor", help="Generate a truthful role-specific one-page resume")
+    _add_shared(tailor_parser)
+    tailor_parser.add_argument("job_id", type=int)
+    tailor_parser.add_argument("--resume-facts", type=Path, default=DEFAULT_RESUME_FACTS)
+    tailor_parser.add_argument("--output", type=Path, default=DEFAULT_RESUMES)
+    tailor_parser.set_defaults(func=cmd_tailor)
     return parser
 
 

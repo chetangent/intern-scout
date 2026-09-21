@@ -8,7 +8,10 @@ version = "0.1.0"
 description = "Human-in-the-loop internship discovery and ranking for Singapore tech roles"
 readme = "README.md"
 requires-python = ">=3.11"
-dependencies = []
+dependencies = [
+  "pypdf>=5.0",
+  "reportlab>=4.0",
+]
 
 [project.scripts]
 intern-scout = "intern_scout.cli:main"
@@ -22,4 +25,3 @@ where = ["src"]
 [tool.pytest.ini_options]
 pythonpath = ["src"]
 testpaths = ["tests"]
-

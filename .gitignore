@@ -7,6 +7,7 @@ data/intern_scout.db
 data/digest.md
 data/profile.json
 data/candidate_facts.json
+data/resume_facts.json
 applications/*
 !applications/.gitkeep
 output/

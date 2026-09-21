@@ -3,9 +3,12 @@ import tempfile
 import unittest
 from pathlib import Path
 
+from pypdf import PdfReader
+
 from intern_scout.applications import approve_application, prepare_application
 from intern_scout.db import get_job, initialise, upsert_job
 from intern_scout.models import Assessment, Job, Profile
+from intern_scout.resume import generate_tailored_resume
 from intern_scout.site_export import export_site
 
 
@@ -118,6 +121,36 @@ class MilestoneTests(unittest.TestCase):
                 {"evidence": []},
                 self.root / "applications",
             )
+
+    def test_tailored_resume_is_single_page_and_uses_relevant_project_first(self) -> None:
+        facts = {
+            "name": "Test Candidate",
+            "contact": {
+                "phone": "+65 0000 0000",
+                "email": "test@example.com",
+                "linkedin": "linkedin.com/in/test",
+                "github": "github.com/test",
+                "website": "example.com",
+            },
+            "education": {
+                "programme": "Example University - Bachelor of Computing",
+                "dates": "2025 - 2029",
+                "coursework": ["Data Structures"],
+            },
+            "skills": {"Languages": ["Java", "Python"], "Platforms": ["Google Cloud Platform"]},
+            "projects": [
+                {"name": "Web Project", "dates": "2026", "keywords": ["frontend"], "bullets": ["Built a website."]},
+                {"name": "Cloud Project", "dates": "2026", "keywords": ["cloud", "python"], "bullets": ["Built a cloud service."]},
+            ],
+            "experience": [],
+            "leadership": [],
+            "certifications": ["Cloud Fundamentals"],
+        }
+        output = generate_tailored_resume(get_job(self.db_path, self.job_id), candidate(), facts, self.root / "pdf")
+        reader = PdfReader(str(output))
+        self.assertEqual(len(reader.pages), 1)
+        text = reader.pages[0].extract_text()
+        self.assertLess(text.index("Cloud Project"), text.index("Web Project"))
 
 
 if __name__ == "__main__":

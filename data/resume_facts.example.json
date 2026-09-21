@@ -1,0 +1,31 @@
+{
+  "name": "Example Candidate",
+  "contact": {
+    "phone": "+65 0000 0000",
+    "email": "candidate@example.com",
+    "linkedin": "linkedin.com/in/example",
+    "github": "github.com/example",
+    "website": "example.com"
+  },
+  "education": {
+    "programme": "Example University - Bachelor of Computing (Honours), Computer Science",
+    "dates": "Aug 2025 - May 2029",
+    "coursework": ["Data Structures", "Operating Systems"]
+  },
+  "skills": {
+    "Languages": ["Python", "Java", "SQL"],
+    "Frameworks and Platforms": ["React", "PostgreSQL", "Google Cloud Platform"],
+    "Engineering Tools": ["Git", "GitHub Actions", "Playwright"]
+  },
+  "projects": [
+    {
+      "name": "Example Project | Python, PostgreSQL",
+      "dates": "May 2026 - Aug 2026",
+      "keywords": ["software engineering", "cloud", "database"],
+      "bullets": ["Built and tested a factual example project."]
+    }
+  ],
+  "experience": [],
+  "leadership": [],
+  "certifications": ["Example Cloud Certification"]
+}

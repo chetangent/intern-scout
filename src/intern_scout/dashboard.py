@@ -7,7 +7,8 @@ from urllib.parse import parse_qs
 
 from .applications import approve_application, load_facts
 from .config import load_profile
-from .db import VALID_STATUSES, list_jobs, stats, update_status
+from .db import VALID_STATUSES, get_job, list_jobs, stats, update_status
+from .resume import generate_tailored_resume, load_resume_facts
 
 
 def _page(db_path: str | Path, message: str = "") -> bytes:
@@ -36,7 +37,7 @@ def _page(db_path: str | Path, message: str = "") -> bytes:
                 </form>
                 <form method="post" action="/approve">
                   <input type="hidden" name="job_id" value="{job['id']}">
-                  <button class="primary" type="submit">Approve &amp; prepare</button>
+                  <button class="primary" type="submit">Approve, tailor &amp; prepare</button>
                 </form>
               </div>
             </article>
@@ -73,6 +74,8 @@ def make_handler(
     profile_path: str | Path,
     facts_path: str | Path,
     applications_path: str | Path,
+    resume_facts_path: str | Path,
+    resume_output_path: str | Path,
 ):
     class Handler(BaseHTTPRequestHandler):
         def do_GET(self) -> None:  # noqa: N802
@@ -92,14 +95,25 @@ def make_handler(
             try:
                 job_id = int(values["job_id"][0])
                 if self.path == "/approve":
+                    job = get_job(db_path, job_id)
+                    if job is None:
+                        raise ValueError(f"Job {job_id} was not found")
+                    profile = load_profile(profile_path)
+                    resume = generate_tailored_resume(
+                        job,
+                        profile,
+                        load_resume_facts(resume_facts_path),
+                        resume_output_path,
+                    )
                     directory = approve_application(
                         db_path,
                         job_id,
-                        load_profile(profile_path),
+                        profile,
                         load_facts(facts_path),
                         applications_path,
+                        resume_path=resume,
                     )
-                    message = f"Approved job {job_id}; private application packet created at {directory}."
+                    message = f"Approved job {job_id}; tailored resume and private packet created at {directory}."
                 else:
                     status = values["status"][0]
                     if status not in VALID_STATUSES:
@@ -129,9 +143,19 @@ def serve(
     profile_path: str | Path = "data/profile.json",
     facts_path: str | Path = "data/candidate_facts.json",
     applications_path: str | Path = "applications",
+    resume_facts_path: str | Path = "data/resume_facts.json",
+    resume_output_path: str | Path = "output/pdf",
 ) -> None:
     server = ThreadingHTTPServer(
-        (host, port), make_handler(db_path, profile_path, facts_path, applications_path)
+        (host, port),
+        make_handler(
+            db_path,
+            profile_path,
+            facts_path,
+            applications_path,
+            resume_facts_path,
+            resume_output_path,
+        ),
     )
     print(f"Intern Scout dashboard: http://{host}:{port}")
     print("Press Ctrl-C to stop.")
