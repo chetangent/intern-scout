@@ -1,0 +1,110 @@
+[
+  {
+    "source": "DSTA official careers",
+    "source_id": "tech-up-2026",
+    "title": "DSTA Technology Undergraduate Programme (Tech UP)",
+    "company": "Defence Science and Technology Agency",
+    "location": "Singapore",
+    "url": "https://www.dsta.gov.sg/join-us/student/tech-up",
+    "description": "Programme for top Year 2 undergraduates in computing, engineering, information or digital technology. Includes an internship, curated courses, networking and mentorship in defence technology.",
+    "date_posted": "2026-08-24",
+    "deadline": "2026-10-18",
+    "tags": ["public sector", "defence", "software engineering", "cloud", "structured", "mentorship"]
+  },
+  {
+    "source": "Apple official careers",
+    "source_id": "200675982-3278",
+    "title": "2027 Apple Internship - Information Systems and Technology",
+    "company": "Apple",
+    "location": "Singapore",
+    "url": "https://jobs.apple.com/en-sg/details/200675982-3278/2027-apple-internship-information-systems-and-technology",
+    "description": "Internship in Apple's Information Systems and Technology organisation supporting large-scale enterprise and customer technology systems, secure transactions and global platforms.",
+    "date_posted": "2026-08-06",
+    "tags": ["private sector", "software engineering", "cloud", "platform", "distributed systems"]
+  },
+  {
+    "source": "Apple official careers",
+    "source_id": "200684585-3278",
+    "title": "Information Security Internship Program (FY27 Summer Intake)",
+    "company": "Apple",
+    "location": "Singapore",
+    "url": "https://jobs.apple.com/en-sg/details/200684585-3278/information-security-internship-program-fy27-summer-intake",
+    "description": "Summer internship protecting business, employee and customer data through security tools and services.",
+    "date_posted": "2026-09-18",
+    "tags": ["private sector", "software engineering", "cybersecurity", "summer 2027"]
+  },
+  {
+    "source": "CSA official careers",
+    "title": "CSA Internship Programme",
+    "company": "Cyber Security Agency of Singapore",
+    "location": "Singapore",
+    "url": "https://www.csa.gov.sg/about-csa/careers/internships/",
+    "description": "Year-round applications for tertiary students, with interns matched to technology and cybersecurity projects supporting Singapore's national cyber resilience.",
+    "tags": ["public sector", "cybersecurity", "software engineering", "learning"]
+  },
+  {
+    "source": "HTX official careers",
+    "title": "HTX Internship Programme - May 2027 intake monitor",
+    "company": "Home Team Science and Technology Agency",
+    "location": "Singapore",
+    "url": "https://www.htx.gov.sg/join-us/internships",
+    "description": "STEM internships across Enterprise AI Products, xCloud, xCode, xCyber, xData and xDigital. The next application cycle opens 1 January 2027 for May intakes, with mentorship and real-world public-safety projects.",
+    "start_date": "2027-05-01",
+    "tags": ["public sector", "defence", "software engineering", "cloud", "ai", "mentorship", "structured"]
+  },
+  {
+    "source": "GovTech official careers",
+    "title": "GovTech Summer 2027 Internship Programme - cycle monitor",
+    "company": "Government Technology Agency of Singapore",
+    "location": "Singapore",
+    "url": "https://www.tech.gov.sg/careers/students-and-graduates/internships/",
+    "description": "Monitor for the May-to-August 2027 cycle. GovTech internships span three to six months on strategic national technology projects, with senior-leader learning, career workshops and flexible work arrangements subject to role.",
+    "work_style": "hybrid/flexible subject to role",
+    "tags": ["public sector", "software engineering", "cloud", "data ai", "hybrid", "mentorship"]
+  },
+  {
+    "source": "OGP official careers",
+    "title": "Open Government Products Software Engineering Internship - monitor",
+    "company": "Open Government Products",
+    "location": "Singapore",
+    "url": "https://www.open.gov.sg/careers/what-we-do/internships/",
+    "description": "Hands-on internship contributing to real public products. OGP values projects, ability, initiative, communication and values; internship slots depend on mentor availability.",
+    "tags": ["public sector", "software engineering", "public impact", "learning"]
+  },
+  {
+    "source": "CSIT official careers",
+    "title": "CSIT Summer 2027 Tech Internships - cycle monitor",
+    "company": "Centre for Strategic Infocomm Technologies",
+    "location": "Singapore",
+    "url": "https://www.csit.gov.sg/join-us/internships",
+    "description": "Singapore-citizen internships with project mentors in software engineering, data science, AI, cybersecurity and cloud infrastructure. Minimum three months preferred; monitor for the Summer 2027 cycle.",
+    "tags": ["public sector", "defence", "software engineering", "cloud", "ai", "mentorship"]
+  },
+  {
+    "source": "Synapxe official careers",
+    "source_id": "57602744",
+    "title": "Uni Internship Jan to July 2027 - AI & Edge Deployment Focus",
+    "company": "Synapxe",
+    "location": "Singapore",
+    "url": "https://careers-public-healthtech-jobs.synapxe.sg/job/Uni-Internship-Jan-to-July-2027-AI-%26-Edge-Deployment-Focus/57602744/",
+    "description": "Develop and optimise AI models for edge devices, Android, embedded platforms and robotics in public HealthTech. Synapxe promotes hybrid arrangements, learning resources and work-life harmony.",
+    "date_posted": "2026-09-02",
+    "start_date": "2027-01-01",
+    "end_date": "2027-07-31",
+    "work_style": "hybrid",
+    "tags": ["public sector", "public healthtech", "ai", "software engineering", "hybrid", "learning"]
+  },
+  {
+    "source": "Amazon official careers",
+    "source_id": "10544261",
+    "title": "Software Developer Intern - Field Innovation, Security Search and Observability",
+    "company": "Amazon Web Services Singapore",
+    "location": "Singapore",
+    "url": "https://amazon.jobs/en-gb/jobs/10544261/software-developer-intern-field-innovation-security-search-and-observability-sso",
+    "description": "Build scalable services and solve customer problems using modern cloud technology in AWS Singapore.",
+    "start_date": "2027-01-04",
+    "end_date": "2027-06-30",
+    "tags": ["private sector", "software engineering", "cloud", "distributed systems"]
+  }
+]
+

@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="A privacy-safe, human-reviewed Singapore technology internship tracker.">
+    <title>Intern Scout</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <header class="hero">
+      <div>
+        <p class="eyebrow">Singapore · 2027</p>
+        <h1>Intern Scout</h1>
+        <p class="subtitle">Ranked technology internships, with final decisions kept human.</p>
+      </div>
+      <div class="summary" aria-live="polite">
+        <strong id="job-count">—</strong>
+        <span>opportunities</span>
+        <small id="updated-at">Loading…</small>
+      </div>
+    </header>
+
+    <main>
+      <section class="controls" aria-label="Filters">
+        <label>
+          Search
+          <input id="search" type="search" placeholder="Cloud, GovTech, algorithms…">
+        </label>
+        <label>
+          Eligibility
+          <select id="eligibility">
+            <option value="">All</option>
+            <option value="eligible">Eligible</option>
+            <option value="needs_review">Needs review</option>
+            <option value="ineligible">Ineligible</option>
+          </select>
+        </label>
+        <label>
+          Decision
+          <select id="decision">
+            <option value="">All</option>
+            <option value="new">New</option>
+            <option value="approved">Approved</option>
+            <option value="maybe">Maybe</option>
+            <option value="rejected">Rejected</option>
+          </select>
+        </label>
+      </section>
+
+      <p class="privacy-note">Review decisions are stored only in this browser. No personal profile or application data is published.</p>
+      <section id="jobs" class="jobs" aria-live="polite"></section>
+      <noscript>This dashboard requires JavaScript to load the exported opportunity data.</noscript>
+    </main>
+
+    <footer>
+      <p>Data comes from configured public employer pages. Always verify details on the official application page.</p>
+    </footer>
+    <script src="app.js" defer></script>
+  </body>
+</html>
+

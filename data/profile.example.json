@@ -1,0 +1,22 @@
+{
+  "name": "Your name",
+  "citizenship": "Your citizenship or work authorisation",
+  "gpa": null,
+  "gpa_scale": null,
+  "degree": "Your degree",
+  "graduation_date": "YYYY-MM",
+  "location": "Singapore",
+  "availability": [
+    {
+      "label": "Summer",
+      "start": "2027-05-01",
+      "end": "2027-08-15"
+    }
+  ],
+  "interests": ["software engineering", "cloud computing"],
+  "skills": ["Python", "Java"],
+  "preferred_sectors": ["public sector"],
+  "preferred_work_styles": ["hybrid", "regular office hours"],
+  "defence_roles_ok": false
+}
+

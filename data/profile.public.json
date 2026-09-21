@@ -1,0 +1,58 @@
+{
+  "name": "Singapore CS undergraduate",
+  "citizenship": "Singapore citizen",
+  "gpa": null,
+  "gpa_scale": null,
+  "degree": "Computer Science and Mathematics",
+  "graduation_date": "2029-05",
+  "location": "Singapore",
+  "availability": [
+    {
+      "label": "Summer 2027",
+      "start": "2027-05-01",
+      "end": "2027-08-15"
+    },
+    {
+      "label": "Semester 1 AY2027/28",
+      "start": "2027-08-01",
+      "end": "2027-12-31"
+    }
+  ],
+  "interests": [
+    "algorithms",
+    "cloud computing",
+    "agentic software engineering",
+    "software engineering"
+  ],
+  "skills": [
+    "Java",
+    "Python",
+    "C++",
+    "SQL",
+    "JavaScript",
+    "TypeScript",
+    "React",
+    "Next.js",
+    "Node.js",
+    "Supabase",
+    "PostgreSQL",
+    "GCP",
+    "Git",
+    "Playwright",
+    "Vitest"
+  ],
+  "preferred_sectors": [
+    "public sector",
+    "public healthtech",
+    "defence technology",
+    "cloud infrastructure",
+    "software engineering"
+  ],
+  "preferred_work_styles": [
+    "hybrid",
+    "remote",
+    "regular office hours"
+  ],
+  "defence_roles_ok": true
+}
+

@@ -1,0 +1,15 @@
+{
+  "work_authorisation": "State your work authorisation and sponsorship needs truthfully.",
+  "evidence": [
+    {
+      "name": "Example project",
+      "keywords": ["software engineering", "python", "cloud"],
+      "reason": "building and deploying a tested cloud application",
+      "bullets": [
+        "Replace this with a truthful, quantified project bullet.",
+        "Replace this with another relevant achievement."
+      ]
+    }
+  ]
+}
+
