@@ -17,16 +17,19 @@ class DatabaseTests(unittest.TestCase):
                 company="Example",
                 location="Singapore",
                 url="https://example.com/job/1",
+                deadline="2027-02-01",
             )
             assessment = Assessment(80, ["fit"], "needs_review", ["dates"])
             job_id = upsert_job(db_path, job, assessment)
             self.assertTrue(update_status(db_path, job_id, "approved"))
             job.description = "Updated"
+            job.deadline = ""
             upsert_job(db_path, job, assessment)
             jobs = list_jobs(db_path)
             self.assertEqual(len(jobs), 1)
             self.assertEqual(jobs[0]["description"], "Updated")
             self.assertEqual(jobs[0]["review_status"], "approved")
+            self.assertEqual(jobs[0]["deadline"], "2027-02-01")
             self.assertEqual(get_job(db_path, job_id)["title"], "Intern")
 
 

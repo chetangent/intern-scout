@@ -1,6 +1,6 @@
 import unittest
 
-from intern_scout.models import Job, Profile
+from intern_scout.models import Job, Profile, infer_date_range
 from intern_scout.scoring import score_job
 
 
@@ -27,6 +27,35 @@ def profile() -> Profile:
 
 
 class ScoringTests(unittest.TestCase):
+    def test_infers_month_range_from_title(self) -> None:
+        self.assertEqual(
+            infer_date_range("Uni Internship Jan to July 2027 - Cloud"),
+            ("2027-01-01", "2027-07-31"),
+        )
+
+    def test_inferred_incompatible_dates_are_ineligible(self) -> None:
+        job = Job(
+            source="test",
+            title="Uni Internship Jan to July 2027 - Cloud",
+            company="Agency",
+            location="Singapore",
+            url="https://example.gov.sg/job/4",
+        )
+        assessment = score_job(job, profile())
+        self.assertEqual(assessment.eligibility, "ineligible")
+
+    def test_ite_role_is_ineligible_for_university_profile(self) -> None:
+        job = Job(
+            source="test",
+            title="ITE Internship Oct 2026 to Sep 2027",
+            company="Agency",
+            location="Singapore",
+            url="https://example.gov.sg/job/5",
+        )
+        assessment = score_job(job, profile())
+        self.assertEqual(assessment.eligibility, "ineligible")
+        self.assertIn("Role is restricted to ITE students", assessment.eligibility_reasons)
+
     def test_matching_public_hybrid_role_scores_highly(self) -> None:
         job = Job(
             source="test",

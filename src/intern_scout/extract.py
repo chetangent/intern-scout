@@ -185,6 +185,8 @@ def jobs_from_links(parser: PageParser, page_url: str, source: dict[str, Any]) -
                 location=str(source.get("location", "Singapore")),
                 url=absolute_url,
                 description=str(source.get("description", "")),
+                start_date=str(source.get("start_date", "")),
+                end_date=str(source.get("end_date", "")),
                 tags=list(source.get("tags", [])),
             )
         )
@@ -208,6 +210,8 @@ def collect_source(source: dict[str, Any], *, html: str | None = None) -> list[J
                 location=str(source.get("location", "Singapore")),
                 url=page_url,
                 description=str(source.get("description", "")),
+                start_date=str(source.get("start_date", "")),
+                end_date=str(source.get("end_date", "")),
                 work_style=str(source.get("work_style", "")),
                 tags=list(source.get("tags", [])),
             )
@@ -227,4 +231,3 @@ def collect_all(sources: list[dict[str, Any]], *, delay_seconds: float = 1.0) ->
         if index < len(sources) - 1 and delay_seconds:
             time.sleep(delay_seconds)
     return jobs, errors
-

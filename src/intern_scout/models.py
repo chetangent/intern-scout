@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass, field
+import calendar
+import re
 from datetime import date, datetime
 from hashlib import sha256
 from typing import Any
@@ -33,6 +35,49 @@ def parse_date(value: str | date | None) -> date | None:
         except ValueError:
             continue
     return None
+
+
+MONTHS = {
+    "jan": 1,
+    "january": 1,
+    "feb": 2,
+    "february": 2,
+    "mar": 3,
+    "march": 3,
+    "apr": 4,
+    "april": 4,
+    "may": 5,
+    "jun": 6,
+    "june": 6,
+    "jul": 7,
+    "july": 7,
+    "aug": 8,
+    "august": 8,
+    "sep": 9,
+    "sept": 9,
+    "september": 9,
+    "oct": 10,
+    "october": 10,
+    "nov": 11,
+    "november": 11,
+    "dec": 12,
+    "december": 12,
+}
+
+
+def infer_date_range(text: str) -> tuple[str, str]:
+    month = r"Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?"
+    match = re.search(rf"\b({month})\s*(?:to|[-–—])\s*({month})\s+(20\d{{2}})\b", text, re.I)
+    if not match:
+        return "", ""
+    start_month = MONTHS[match.group(1).lower()]
+    end_month = MONTHS[match.group(2).lower()]
+    year = int(match.group(3))
+    end_year = year + 1 if end_month < start_month else year
+    return (
+        date(year, start_month, 1).isoformat(),
+        date(end_year, end_month, calendar.monthrange(end_year, end_month)[1]).isoformat(),
+    )
 
 
 @dataclass(slots=True)
@@ -112,6 +157,8 @@ class Job:
         self.url = _clean_url(self.url)
         self.description = " ".join(self.description.split())
         self.tags = sorted({tag.strip().lower() for tag in self.tags if tag.strip()})
+        if not self.start_date and not self.end_date:
+            self.start_date, self.end_date = infer_date_range(self.title)
 
     @property
     def fingerprint(self) -> str:

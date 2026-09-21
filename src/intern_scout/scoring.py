@@ -65,6 +65,10 @@ def assess_eligibility(job: Job, profile: Profile) -> tuple[str, list[str]]:
         hard_failure = True
         reasons.append("Defence roles are disabled in profile")
 
+    if re.search(r"\bite internship\b", text):
+        hard_failure = True
+        reasons.append("Role is restricted to ITE students")
+
     start = parse_date(job.start_date)
     end = parse_date(job.end_date)
     if start and end:
@@ -156,4 +160,3 @@ def score_job(job: Job, profile: Profile) -> Assessment:
         eligibility=eligibility,
         eligibility_reasons=eligibility_reasons,
     )
-

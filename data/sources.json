@@ -5,7 +5,7 @@
     "url": "https://jobs.apple.com/en-sg/search?location=singapore-SGP&team=internships-STDNT-INTRN",
     "mode": "auto",
     "include_url_patterns": ["/details/"],
-    "include_title_patterns": ["intern"],
+    "include_title_patterns": ["\\bintern(?:ship)?\\b"],
     "location": "Singapore",
     "tags": ["private sector", "software engineering", "cloud", "platform"]
   },
@@ -15,7 +15,7 @@
     "url": "https://careers-public-healthtech-jobs.synapxe.sg/go/internship/672944/",
     "mode": "links",
     "include_url_patterns": ["/job/"],
-    "include_title_patterns": ["internship", "intern"],
+    "include_title_patterns": ["\\bintern(?:ship)?\\b"],
     "location": "Singapore",
     "description": "Public HealthTech internships with hybrid work arrangements, learning resources and work-life harmony.",
     "tags": ["public sector", "public healthtech", "hybrid", "software engineering", "cloud", "data ai"]
@@ -28,6 +28,8 @@
     "include_url_patterns": ["/internship-details/"],
     "location": "Singapore",
     "description": "Singapore-citizen technology internships with project mentors across software engineering, AI and cloud infrastructure.",
+    "start_date": "2027-01-01",
+    "end_date": "2027-04-30",
     "tags": ["public sector", "defence", "software engineering", "cloud", "ai", "mentorship"]
   },
   {
@@ -35,7 +37,7 @@
     "company": "Cyber Security Agency of Singapore",
     "url": "https://www.csa.gov.sg/about-csa/careers/internships/",
     "mode": "auto",
-    "include_title_patterns": ["intern"],
+    "include_title_patterns": ["\\bintern(?:ship)?\\b"],
     "emit_page": true,
     "title": "CSA Internship Programme (year-round monitor)",
     "location": "Singapore",
@@ -47,7 +49,7 @@
     "company": "Open Government Products",
     "url": "https://www.open.gov.sg/careers/what-we-do/internships/",
     "mode": "auto",
-    "include_title_patterns": ["intern"],
+    "include_title_patterns": ["\\bintern(?:ship)?\\b"],
     "emit_page": true,
     "title": "Open Government Products Internship Programme (monitor)",
     "location": "Singapore",
@@ -58,7 +60,7 @@
     "name": "DSTA Tech UP",
     "company": "Defence Science and Technology Agency",
     "url": "https://www.dsta.gov.sg/join-us/student/tech-up",
-    "mode": "auto",
+    "mode": "page",
     "emit_page": true,
     "title": "DSTA Technology Undergraduate Programme (Tech UP)",
     "location": "Singapore",
@@ -70,13 +72,14 @@
     "company": "Government Technology Agency of Singapore",
     "url": "https://www.tech.gov.sg/careers/students-and-graduates/internships/",
     "mode": "auto",
-    "include_title_patterns": ["intern"],
+    "include_title_patterns": ["\\bintern(?:ship)?\\b"],
     "emit_page": true,
     "title": "GovTech Internship Programme (cycle monitor)",
     "location": "Singapore",
     "description": "Three-to-six-month internships on national digital transformation projects, with learning from senior leaders and career workshops. Monitor for the Summer 2027 cycle.",
+    "start_date": "2027-01-01",
+    "end_date": "2027-04-30",
     "work_style": "hybrid/flexible subject to role",
     "tags": ["public sector", "software engineering", "cloud", "data ai", "hybrid", "mentorship"]
   }
 ]
-
