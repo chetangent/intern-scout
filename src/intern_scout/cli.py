@@ -6,7 +6,7 @@ import sys
 from pathlib import Path
 
 from .config import load_profile, load_seed_jobs, load_sources
-from .applications import load_facts, prepare_application
+from .applications import approve_application, load_facts, prepare_application
 from .dashboard import serve
 from .db import VALID_STATUSES, initialise, list_jobs, stats, update_status, upsert_job
 from .digest import build_digest, write_digest
@@ -105,7 +105,14 @@ def cmd_stats(args: argparse.Namespace) -> int:
 
 def cmd_serve(args: argparse.Namespace) -> int:
     initialise(args.db)
-    serve(args.db, host=args.host, port=args.port)
+    serve(
+        args.db,
+        host=args.host,
+        port=args.port,
+        profile_path=args.profile,
+        facts_path=args.facts,
+        applications_path=args.output,
+    )
     return 0
 
 
@@ -130,6 +137,28 @@ def cmd_prepare(args: argparse.Namespace) -> int:
         print(str(exc), file=sys.stderr)
         return 1
     print(f"Prepared application workspace: {directory}")
+    return 0
+
+
+def cmd_approve(args: argparse.Namespace) -> int:
+    initialise(args.db)
+    try:
+        directory = approve_application(
+            args.db,
+            args.job_id,
+            load_profile(args.profile),
+            load_facts(args.facts),
+            args.output,
+            resume_path=args.resume,
+        )
+    except (ValueError, FileNotFoundError) as exc:
+        print(str(exc), file=sys.stderr)
+        return 1
+    print(f"Approved job {args.job_id} and prepared: {directory}")
+    if args.resume is None:
+        print("No tailored PDF attached yet; add one before starting the employer form.")
+    else:
+        print("Tailored resume attached. The application still requires final form review before submission.")
     return 0
 
 
@@ -177,6 +206,8 @@ def build_parser() -> argparse.ArgumentParser:
     _add_shared(serve_parser)
     serve_parser.add_argument("--host", default="127.0.0.1")
     serve_parser.add_argument("--port", type=int, default=8765)
+    serve_parser.add_argument("--facts", type=Path, default=DEFAULT_FACTS)
+    serve_parser.add_argument("--output", type=Path, default=DEFAULT_APPLICATIONS)
     serve_parser.set_defaults(func=cmd_serve)
 
     export_parser = subparsers.add_parser("export-site", help="Export public opportunity data for GitHub Pages")
@@ -191,6 +222,16 @@ def build_parser() -> argparse.ArgumentParser:
     prepare_parser.add_argument("--facts", type=Path, default=DEFAULT_FACTS)
     prepare_parser.add_argument("--output", type=Path, default=DEFAULT_APPLICATIONS)
     prepare_parser.set_defaults(func=cmd_prepare)
+
+    approve_parser = subparsers.add_parser(
+        "approve", help="Approve a viable role and create its private application packet"
+    )
+    _add_shared(approve_parser)
+    approve_parser.add_argument("job_id", type=int)
+    approve_parser.add_argument("--facts", type=Path, default=DEFAULT_FACTS)
+    approve_parser.add_argument("--output", type=Path, default=DEFAULT_APPLICATIONS)
+    approve_parser.add_argument("--resume", type=Path, help="Optimised resume PDF to attach")
+    approve_parser.set_defaults(func=cmd_approve)
     return parser
 
 

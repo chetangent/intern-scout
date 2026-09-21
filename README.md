@@ -92,6 +92,14 @@ This writes four files under the ignored `applications/` directory:
 
 The drafts use facts from the ignored `data/candidate_facts.json`. They never invent metrics and never submit anything.
 
+To approve a viable role, create the packet, and attach an already optimised resume in one step:
+
+```bash
+intern-scout approve 3 --resume output/pdf/role-specific-resume.pdf
+```
+
+The command blocks roles already known to be ineligible, marks the role approved, copies the PDF into the private application workspace, and writes `application.json` for the later browser-filling stage. Approval authorises preparation only: the browser runner must show all extracted fields and stop before the employer's final Submit action.
+
 ## GitHub Pages
 
 The static dashboard under [`site/`](site/) can be exported locally:
@@ -110,7 +118,7 @@ The Pages workflow:
 - deploys the static dashboard; and
 - repeats daily at 00:17 UTC / 08:17 Singapore time.
 
-Review decisions on the public site are stored in the visitor's browser using `localStorage`. They are not uploaded. The local profile, GPA, application drafts, resume and SQLite state are excluded from Git.
+Review decisions on the public site are stored in the visitor's browser using `localStorage`. They are not uploaded. The **Export approved roles** button downloads a name-free JSON shortlist that can be brought back to the private local workflow. The local profile, GPA, application drafts, resume and SQLite state are excluded from Git.
 
 GitHub repository setup:
 
@@ -147,4 +155,4 @@ No test dependency installation is required.
 
 ## Current limitation and next milestone
 
-The application workspace now creates role-specific resume guidance and draft answers. The next safe milestone is generating final role-specific resume PDFs from an approved draft, followed by opening the official form for final human review. It should not submit applications or answer declarations autonomously.
+The private approval gate and application manifest are in place. The next milestone is a browser-filling runner that uses the attached role-specific PDF, completes deterministic fields, flags unanswered declarations, and pauses on a final review screen before submission. CAPTCHA, authentication and employer-specific declarations will remain human steps.

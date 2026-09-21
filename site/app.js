@@ -22,6 +22,31 @@ function saveDecision(id, decision) {
   render();
 }
 
+function exportApprovals() {
+  const decisions = loadDecisions();
+  const jobs = state.jobs
+    .filter((job) => decisions[job.key] === "approved")
+    .map((job) => ({
+      fingerprint: job.key,
+      title: job.title,
+      company: job.company,
+      official_url: job.url,
+      decision: "approved",
+    }));
+  if (!jobs.length) {
+    window.alert("Approve at least one role before exporting.");
+    return;
+  }
+  const blob = new Blob([
+    `${JSON.stringify({ exported_at: new Date().toISOString(), jobs }, null, 2)}\n`,
+  ], { type: "application/json" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = "intern-scout-approvals.json";
+  link.click();
+  URL.revokeObjectURL(link.href);
+}
+
 function textElement(tag, className, text) {
   const element = document.createElement(tag);
   if (className) element.className = className;
@@ -108,6 +133,7 @@ async function start() {
 document.querySelector("#search").addEventListener("input", (event) => { state.search = event.target.value; render(); });
 document.querySelector("#eligibility").addEventListener("change", (event) => { state.eligibility = event.target.value; render(); });
 document.querySelector("#decision").addEventListener("change", (event) => { state.decision = event.target.value; render(); });
+document.querySelector("#export-approvals").addEventListener("click", exportApprovals);
 
 start().catch((error) => {
   document.querySelector("#jobs").append(textElement("p", "empty", `Unable to load opportunities: ${error.message}`));

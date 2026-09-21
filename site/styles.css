@@ -27,7 +27,10 @@ h1 { margin: 0; font-size: clamp(2.5rem, 7vw, 5rem); line-height: .95; letter-sp
 .controls { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 14px; padding: 18px; background: var(--surface); border: 1px solid var(--line); border-radius: 18px; }
 label { display: grid; gap: 7px; color: var(--muted); font-size: .82rem; font-weight: 700; }
 input, select { width: 100%; border: 1px solid #cbd3df; border-radius: 9px; padding: 11px 12px; background: white; color: var(--ink); font: inherit; }
-.privacy-note { margin: 16px 4px 26px; color: var(--muted); font-size: .9rem; }
+.review-tools { display:flex; justify-content:space-between; align-items:center; gap:16px; margin:16px 4px 26px; }
+.privacy-note { margin:0; color: var(--muted); font-size: .9rem; }
+.review-tools button { flex:0 0 auto; border:1px solid var(--brand); border-radius:9px; padding:9px 12px; background:white; color:var(--brand); font-weight:700; cursor:pointer; }
+.review-tools button:hover { background:#eef3ff; }
 .jobs { display: grid; gap: 15px; }
 .card { display: grid; grid-template-columns: 68px 1fr; gap: 20px; padding: 21px; border: 1px solid var(--line); border-left: 5px solid var(--amber); border-radius: 16px; background: var(--surface); box-shadow: 0 8px 28px rgb(24 39 75 / 6%); }
 .card[data-eligibility="eligible"] { border-left-color: var(--green); }
@@ -51,7 +54,7 @@ footer { padding: 38px 0 60px; color: var(--muted); font-size: .88rem; }
   .hero { display: grid; padding-top: 42px; }
   .summary { width: 100%; }
   .controls { grid-template-columns: 1fr; }
+  .review-tools { align-items:flex-start; flex-direction:column; }
   .card { grid-template-columns: 50px 1fr; gap: 13px; padding: 16px; }
   .score { width: 46px; height: 46px; font-size: 1rem; }
 }
-

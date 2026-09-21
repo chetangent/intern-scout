@@ -5,6 +5,8 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs
 
+from .applications import approve_application, load_facts
+from .config import load_profile
 from .db import VALID_STATUSES, list_jobs, stats, update_status
 
 
@@ -17,7 +19,7 @@ def _page(db_path: str | Path, message: str = "") -> bytes:
         checks = "".join(f"<li>{html.escape(reason)}</li>" for reason in job["eligibility_reasons"][:5])
         buttons = "".join(
             f'<button name="status" value="{status}">{status.replace("_", " ").title()}</button>'
-            for status in ("approved", "maybe", "rejected", "applied", "interview")
+            for status in ("maybe", "rejected", "applied", "interview")
         )
         cards.append(
             f"""
@@ -31,6 +33,10 @@ def _page(db_path: str | Path, message: str = "") -> bytes:
                 <details><summary>Eligibility checks</summary><ul>{checks}</ul></details>
                 <form method="post" action="/status">
                   <input type="hidden" name="job_id" value="{job['id']}">{buttons}
+                </form>
+                <form method="post" action="/approve">
+                  <input type="hidden" name="job_id" value="{job['id']}">
+                  <button class="primary" type="submit">Approve &amp; prepare</button>
                 </form>
               </div>
             </article>
@@ -50,6 +56,8 @@ h1 {{ margin:0; font-size:2rem; }} .muted,.meta {{ color:#5d6d7e; }}
 .content {{ flex:1; min-width:0; }} h2 {{ margin:0 0 6px; font-size:1.15rem; }} a {{ color:#145a9c; }}
 details {{ margin:10px 0; }} button {{ margin:8px 8px 0 0; padding:7px 11px; border:1px solid #aab7b8; border-radius:7px; background:#fff; cursor:pointer; }}
 button:hover {{ background:#eef4fa; }} .message {{ background:#e8f8f5; padding:10px 14px; border-radius:8px; }}
+button.primary {{ background:#145a9c; color:white; border-color:#145a9c; font-weight:700; }}
+button.primary:hover {{ background:#0e477d; }}
 @media(max-width:620px) {{ header {{ display:block; }} .card {{ gap:12px; }} .score {{ flex-basis:46px; height:46px; }} }}
 </style></head><body>
 <header><div><h1>Intern Scout</h1><div class="muted">Human-approved Singapore internship queue</div></div>
@@ -60,7 +68,12 @@ button:hover {{ background:#eef4fa; }} .message {{ background:#e8f8f5; padding:1
     return body.encode("utf-8")
 
 
-def make_handler(db_path: str | Path):
+def make_handler(
+    db_path: str | Path,
+    profile_path: str | Path,
+    facts_path: str | Path,
+    applications_path: str | Path,
+):
     class Handler(BaseHTTPRequestHandler):
         def do_GET(self) -> None:  # noqa: N802
             content = _page(db_path)
@@ -71,20 +84,30 @@ def make_handler(db_path: str | Path):
             self.wfile.write(content)
 
         def do_POST(self) -> None:  # noqa: N802
-            if self.path != "/status":
+            if self.path not in {"/status", "/approve"}:
                 self.send_error(404)
                 return
             length = int(self.headers.get("Content-Length", "0"))
             values = parse_qs(self.rfile.read(length).decode("utf-8"))
             try:
                 job_id = int(values["job_id"][0])
-                status = values["status"][0]
-                if status not in VALID_STATUSES:
-                    raise ValueError("invalid status")
-                changed = update_status(db_path, job_id, status)
-                message = f"Updated job {job_id} to {status}." if changed else f"Job {job_id} was not found."
-            except (KeyError, ValueError, IndexError):
-                message = "Invalid review request."
+                if self.path == "/approve":
+                    directory = approve_application(
+                        db_path,
+                        job_id,
+                        load_profile(profile_path),
+                        load_facts(facts_path),
+                        applications_path,
+                    )
+                    message = f"Approved job {job_id}; private application packet created at {directory}."
+                else:
+                    status = values["status"][0]
+                    if status not in VALID_STATUSES:
+                        raise ValueError("invalid status")
+                    changed = update_status(db_path, job_id, status)
+                    message = f"Updated job {job_id} to {status}." if changed else f"Job {job_id} was not found."
+            except (KeyError, ValueError, IndexError, FileNotFoundError) as exc:
+                message = str(exc) if str(exc) else "Invalid review request."
             content = _page(db_path, message)
             self.send_response(200)
             self.send_header("Content-Type", "text/html; charset=utf-8")
@@ -98,8 +121,18 @@ def make_handler(db_path: str | Path):
     return Handler
 
 
-def serve(db_path: str | Path, host: str = "127.0.0.1", port: int = 8765) -> None:
-    server = ThreadingHTTPServer((host, port), make_handler(db_path))
+def serve(
+    db_path: str | Path,
+    host: str = "127.0.0.1",
+    port: int = 8765,
+    *,
+    profile_path: str | Path = "data/profile.json",
+    facts_path: str | Path = "data/candidate_facts.json",
+    applications_path: str | Path = "applications",
+) -> None:
+    server = ThreadingHTTPServer(
+        (host, port), make_handler(db_path, profile_path, facts_path, applications_path)
+    )
     print(f"Intern Scout dashboard: http://{host}:{port}")
     print("Press Ctrl-C to stop.")
     try:
@@ -108,4 +141,3 @@ def serve(db_path: str | Path, host: str = "127.0.0.1", port: int = 8765) -> Non
         pass
     finally:
         server.server_close()
-

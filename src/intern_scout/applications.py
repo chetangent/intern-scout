@@ -2,10 +2,12 @@ from __future__ import annotations
 
 import json
 import re
+import shutil
+from datetime import datetime
 from pathlib import Path
 from typing import Any
 
-from .db import get_job
+from .db import get_job, update_status
 from .models import Profile
 
 
@@ -172,3 +174,57 @@ def prepare_application(
     )
     return directory
 
+
+def approve_application(
+    db_path: str | Path,
+    job_id: int,
+    profile: Profile,
+    facts: dict[str, Any],
+    output_root: str | Path,
+    *,
+    resume_path: str | Path | None = None,
+) -> Path:
+    """Approve a viable role and create its private application packet.
+
+    Approval authorises preparation, not submission. The manifest is designed for
+    a later browser-filling step that must stop before the employer's final submit.
+    """
+    job = get_job(db_path, job_id)
+    if job is None:
+        raise ValueError(f"Job {job_id} was not found")
+    if job["eligibility"] == "ineligible":
+        raise ValueError(
+            f"Job {job_id} is marked ineligible. Resolve the eligibility conflict before approving it."
+        )
+
+    directory = prepare_application(db_path, job_id, profile, facts, output_root)
+    attached_resume = ""
+    if resume_path is not None:
+        source = Path(resume_path).expanduser().resolve()
+        if not source.is_file():
+            raise FileNotFoundError(f"Resume PDF was not found: {source}")
+        if source.suffix.lower() != ".pdf" or source.read_bytes()[:4] != b"%PDF":
+            raise ValueError(f"Resume must be a valid PDF: {source}")
+        destination = directory / "tailored-resume.pdf"
+        shutil.copy2(source, destination)
+        attached_resume = destination.name
+
+    update_status(db_path, job_id, "approved")
+    manifest = {
+        "schema_version": 1,
+        "job_id": job_id,
+        "job_fingerprint": job["fingerprint"],
+        "role": job["title"],
+        "company": job["company"],
+        "official_url": job["url"],
+        "eligibility": job["eligibility"],
+        "approval": "approved_to_prepare",
+        "approved_at": datetime.now().astimezone().isoformat(timespec="seconds"),
+        "resume": attached_resume or None,
+        "submission": "not_started",
+        "requires_final_review": True,
+    }
+    (directory / "application.json").write_text(
+        json.dumps(manifest, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
+    )
+    return directory

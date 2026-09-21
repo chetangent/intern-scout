@@ -3,8 +3,8 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from intern_scout.applications import prepare_application
-from intern_scout.db import initialise, upsert_job
+from intern_scout.applications import approve_application, prepare_application
+from intern_scout.db import get_job, initialise, upsert_job
 from intern_scout.models import Assessment, Job, Profile
 from intern_scout.site_export import export_site
 
@@ -79,6 +79,45 @@ class MilestoneTests(unittest.TestCase):
             {"opportunity.md", "resume-plan.md", "draft-answers.md", "checklist.md"},
         )
         self.assertIn("Cloud project", (output / "resume-plan.md").read_text(encoding="utf-8"))
+
+    def test_approve_application_attaches_resume_and_writes_manifest(self) -> None:
+        facts = {"work_authorisation": "Singapore citizen", "evidence": []}
+        resume = self.root / "resume.pdf"
+        resume.write_bytes(b"%PDF-1.4\n% test resume\n")
+        output = approve_application(
+            self.db_path,
+            self.job_id,
+            candidate(),
+            facts,
+            self.root / "applications",
+            resume_path=resume,
+        )
+        manifest = json.loads((output / "application.json").read_text(encoding="utf-8"))
+        self.assertEqual(manifest["approval"], "approved_to_prepare")
+        self.assertEqual(manifest["resume"], "tailored-resume.pdf")
+        self.assertTrue(manifest["requires_final_review"])
+        self.assertEqual(get_job(self.db_path, self.job_id)["review_status"], "approved")
+
+    def test_approve_application_blocks_known_ineligible_role(self) -> None:
+        ineligible_id = upsert_job(
+            self.db_path,
+            Job(
+                source="official",
+                title="Off-cycle Intern",
+                company="Example",
+                location="Singapore",
+                url="https://example.com/off-cycle",
+            ),
+            Assessment(10, ["Date conflict"], "ineligible", ["Outside availability"]),
+        )
+        with self.assertRaisesRegex(ValueError, "marked ineligible"):
+            approve_application(
+                self.db_path,
+                ineligible_id,
+                candidate(),
+                {"evidence": []},
+                self.root / "applications",
+            )
 
 
 if __name__ == "__main__":
