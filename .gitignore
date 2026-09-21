@@ -9,3 +9,4 @@ data/profile.json
 data/candidate_facts.json
 applications/*
 !applications/.gitkeep
+output/
