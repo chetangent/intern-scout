@@ -24,6 +24,9 @@ jobs:
         uses: actions/setup-python@v6
         with:
           python-version: "3.12"
+          cache: pip
+      - name: Install package
+        run: python -m pip install -e .
       - name: Run tests
         run: PYTHONPATH=src python -m unittest discover -s tests -v
       - name: Initialise curated opportunities
@@ -54,4 +57,3 @@ jobs:
       - name: Deploy GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-
